@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>INFLUENCER RISING</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ig-bg: #ffffff;
+  --ig-surface: #fafafa;
+  --ig-border: #dbdbdb;
+  --ig-text: #000000;
+  --ig-muted: #737373;
+  --ig-blue: #0095f6;
+  --ig-red: #ed4956;
+  --ig-green: #1dbf73;
+  --ig-grad-start: #f09433;
+  --ig-grad: linear-gradient(45deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+  --ig-font: -apple-system,'Noto Sans JP',sans-serif;
+  --nav-h: 49px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
+html,body{height:100%;overflow:hidden;}
+body{background:#000;display:flex;justify-content:center;font-family:var(--ig-font);font-size:14px;color:var(--ig-text);}
+#app{width:100%;max-width:430px;height:100%;display:flex;flex-direction:column;background:var(--ig-surface);position:relative;overflow:hidden;}
+
+/* ===== LOGIN ===== */
+#loginScreen{position:absolute;inset:0;z-index:999;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 40px;gap:0;}
+.login-logo-wrap{width:60px;height:60px;background:var(--ig-grad);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:8px;}
+.login-wordmark{font-size:36px;font-style:italic;font-weight:400;letter-spacing:-0.5px;color:var(--ig-text);margin-bottom:28px;font-family:Georgia,serif;}
+.ig-inp{width:100%;background:#fafafa;border:1px solid var(--ig-border);border-radius:6px;padding:10px 12px;font-size:14px;color:var(--ig-text);outline:none;font-family:var(--ig-font);margin-bottom:10px;transition:border-color .2s;}
+.ig-inp:focus{border-color:#aaa;}
+.ig-inp::placeholder{color:#aaa;font-size:13px;}
+.genre-lbl{font-size:13px;color:var(--ig-muted);margin-bottom:8px;align-self:flex-start;}
+.niche-row{display:flex;gap:6px;width:100%;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;scrollbar-width:none;}
+.niche-row::-webkit-scrollbar{display:none;}
+.niche-chip{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;padding:8px 12px;border:1px solid var(--ig-border);border-radius:8px;background:#fff;cursor:pointer;font-size:11px;color:var(--ig-muted);font-family:var(--ig-font);transition:all .15s;}
+.niche-chip .nc-ico{font-size:20px;}
+.niche-chip.sel{border-color:transparent;background:#eff8ff;color:var(--ig-blue);font-weight:600;}
+.login-btn{width:100%;padding:10px;background:var(--ig-blue);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;font-family:var(--ig-font);cursor:pointer;margin-bottom:16px;}
+.login-btn:active{opacity:.8;}
+.login-divider{display:flex;align-items:center;gap:12px;width:100%;margin-bottom:14px;}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--ig-border);}
+.login-divider span{font-size:13px;font-weight:600;color:var(--ig-muted);}
+.login-fb{font-size:14px;color:var(--ig-blue);font-weight:600;margin-bottom:24px;}
+.login-signup{font-size:13px;color:var(--ig-muted);}
+.login-signup b{color:var(--ig-blue);font-weight:600;}
+
+/* ===== SCREENS ===== */
+.screen{position:absolute;inset:0;bottom:var(--nav-h);display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .2s;background:var(--ig-surface);}
+.screen.active{opacity:1;pointer-events:all;}
+
+/* ===== TOP NAV ===== */
+.ig-topnav{background:var(--ig-bg);border-bottom:1px solid var(--ig-border);display:flex;align-items:center;padding:0 16px;height:44px;flex-shrink:0;}
+.tn-logo{font-size:22px;font-style:italic;font-family:Georgia,serif;letter-spacing:-.3px;flex:1;}
+.tn-icons{display:flex;align-items:center;gap:18px;}
+.icon-btn{background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;position:relative;}
+.icon-btn svg{width:24px;height:24px;}
+.notif-dot{position:absolute;top:-2px;right:-4px;width:8px;height:8px;background:var(--ig-red);border-radius:50%;border:1.5px solid #fff;}
+
+/* ===== PROFILE ===== */
+.prof-header{background:var(--ig-bg);padding:12px 16px 0;flex-shrink:0;}
+.prof-top{display:flex;align-items:center;gap:24px;margin-bottom:14px;}
+.prof-av-ring{width:82px;height:82px;border-radius:50%;padding:3px;background:var(--ig-grad);flex-shrink:0;}
+.prof-av-inner{width:100%;height:100%;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:34px;border:2px solid #fff;}
+.prof-stats{display:flex;flex:1;justify-content:space-around;}
+.pstat{text-align:center;}
+.pstat-n{font-size:17px;font-weight:700;line-height:1.2;}
+.pstat-l{font-size:12px;color:var(--ig-text);}
+.prof-bio{margin-bottom:10px;}
+.prof-name{font-weight:700;font-size:14px;line-height:1.4;}
+.prof-rank{font-size:13px;color:var(--ig-muted);}
+.prof-xp{font-size:13px;color:var(--ig-blue);}
+.prof-actions{display:flex;gap:6px;margin-bottom:12px;}
+.prof-btn{flex:1;padding:7px 0;background:#efefef;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--ig-font);transition:background .15s;}
+.prof-btn:active{background:#ddd;}
+.prof-btn.primary{background:var(--ig-blue);color:#fff;}
+.prof-btn.primary:active{background:#0080d0;}
+.prof-btn.sm{flex:0;padding:7px 12px;}
+
+/* Story highlights */
+.hl-row{display:flex;gap:16px;padding:8px 0 14px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--ig-border);}
+.hl-row::-webkit-scrollbar{display:none;}
+.hl-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;}
+.hl-ring{width:56px;height:56px;border-radius:50%;border:1px solid var(--ig-border);display:flex;align-items:center;justify-content:center;font-size:26px;}
+.hl-ring.new{background:var(--ig-grad);border:none;color:#fff;font-size:22px;font-weight:300;}
+.hl-lbl{font-size:11px;color:var(--ig-text);text-align:center;max-width:60px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* Grid tab bar */
+.grid-tabs{display:flex;background:var(--ig-bg);border-bottom:1px solid var(--ig-border);flex-shrink:0;}
+.gtab{flex:1;display:flex;align-items:center;justify-content:center;padding:12px 0;border:none;background:none;cursor:pointer;border-bottom:1.5px solid transparent;transition:border-color .15s;}
+.gtab svg{width:22px;height:22px;opacity:.4;}
+.gtab.active{border-bottom-color:var(--ig-text);}
+.gtab.active svg{opacity:1;}
+
+/* Photo grid */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
+.pc{aspect-ratio:1;position:relative;overflow:hidden;cursor:pointer;}
+.pc-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;}
+.pc-ov{position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;gap:12px;transition:background .15s;}
+.pc:active .pc-ov{background:rgba(0,0,0,.35);}
+.pc-stat{color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;gap:3px;}
+.pc-viral{position:absolute;top:5px;right:5px;background:var(--ig-red);color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;}
+.grid-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:10px;color:var(--ig-muted);}
+.ge-circle{width:62px;height:62px;border:2px solid var(--ig-muted);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:6px;}
+
+/* ===== POST SCREEN ===== */
+#postScreen{background:var(--ig-bg);}
+.post-topbar{display:flex;align-items:center;padding:0 4px 0 4px;height:44px;border-bottom:1px solid var(--ig-border);flex-shrink:0;}
+.post-topbar-title{flex:1;text-align:center;font-size:16px;font-weight:700;}
+.txtbtn{background:none;border:none;padding:8px 12px;font-size:14px;font-weight:600;color:var(--ig-blue);cursor:pointer;font-family:var(--ig-font);}
+.txtbtn.cancel{color:var(--ig-text);font-weight:400;font-size:18px;}
+.txtbtn.share{font-size:15px;}
+.txtbtn:disabled{color:#aaa;cursor:not-allowed;}
+
+/* Content type tabs */
+.ct-scroll{display:flex;border-bottom:1px solid var(--ig-border);overflow-x:auto;flex-shrink:0;scrollbar-width:none;}
+.ct-scroll::-webkit-scrollbar{display:none;}
+.ct-tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 18px;border:none;background:none;cursor:pointer;font-size:11px;font-weight:600;color:var(--ig-muted);font-family:var(--ig-font);border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;transition:all .15s;}
+.ct-tab .ctico{font-size:18px;}
+.ct-tab.active{color:var(--ig-text);border-bottom-color:var(--ig-text);}
+
+/* Preview */
+.post-preview{width:100%;aspect-ratio:1;max-height:210px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:72px;}
+
+/* Energy dots */
+.energy-row{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--ig-surface);border-bottom:1px solid var(--ig-border);flex-shrink:0;}
+.edots{display:flex;gap:3px;}
+.edot{width:9px;height:9px;border-radius:50%;background:var(--ig-border);transition:background .3s;}
+.edot.on{background:linear-gradient(135deg,#f09433,#dc2743);}
+.etxt{font-size:12px;color:var(--ig-muted);margin-left:auto;}
+
+/* Form */
+.post-form{padding:0;overflow-y:auto;}
+.pf-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--ig-border);}
+.pf-row:last-child{border-bottom:none;}
+.pf-avatar{width:32px;height:32px;border-radius:50%;background:var(--ig-grad);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.pf-caption{flex:1;border:none;outline:none;font-size:14px;color:var(--ig-text);font-family:var(--ig-font);resize:none;background:none;min-height:36px;}
+.pf-caption::placeholder{color:#aaa;}
+.pf-lbl{font-size:15px;color:var(--ig-text);flex:1;}
+.pf-val{font-size:14px;color:var(--ig-muted);}
+.pf-caret{color:var(--ig-muted);font-size:18px;}
+.cd-badge{display:inline-flex;align-items:center;gap:4px;background:#fff3f3;color:var(--ig-red);border:1px solid #ffcdd2;border-radius:12px;padding:3px 10px;font-size:11px;font-weight:600;}
+.share-big-btn{margin:10px 16px;width:calc(100% - 32px);padding:11px;background:var(--ig-blue);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;font-family:var(--ig-font);cursor:pointer;flex-shrink:0;}
+.share-big-btn:active{opacity:.8;}
+.share-big-btn:disabled{background:#acd8fa;cursor:not-allowed;}
+
+/* ===== EXPLORE / SKILLS ===== */
+#exploreScreen{background:var(--ig-surface);}
+.explore-topbar{background:var(--ig-bg);border-bottom:1px solid var(--ig-border);padding:8px 14px;flex-shrink:0;}
+.explore-search-bar{background:#efefef;border:none;border-radius:10px;padding:8px 16px;width:100%;font-size:14px;color:var(--ig-text);outline:none;font-family:var(--ig-font);text-align:center;}
+.explore-search-bar::placeholder{color:var(--ig-muted);}
+.coins-bar{display:flex;align-items:center;gap:6px;background:var(--ig-bg);border-bottom:1px solid var(--ig-border);padding:10px 16px;font-size:13px;font-weight:600;flex-shrink:0;}
+.coins-bar span.hint{font-weight:400;color:var(--ig-muted);font-size:12px;margin-left:auto;}
+.sk-section{padding:12px 14px 0;}
+.sk-section-hd{font-size:14px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+.sk-section-hd span{font-weight:400;color:var(--ig-blue);font-size:13px;}
+.sk-card{display:flex;align-items:center;gap:12px;background:var(--ig-bg);border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;border:1px solid var(--ig-border);transition:background .15s;}
+.sk-card:active{background:#f8f8f8;}
+.sk-ico{width:44px;height:44px;border-radius:8px;background:var(--ig-surface);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.sk-info{flex:1;}
+.sk-name{font-size:14px;font-weight:600;margin-bottom:2px;}
+.sk-desc{font-size:12px;color:var(--ig-muted);}
+.sk-prog{margin-top:5px;height:3px;background:#eee;border-radius:2px;overflow:hidden;}
+.sk-prog-fill{height:100%;background:var(--ig-blue);border-radius:2px;transition:width .5s;}
+.sk-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.sk-lv{font-size:11px;color:var(--ig-muted);}
+.sk-cost{background:#eff8ff;color:var(--ig-blue);border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700;}
+.sk-max{background:#f0faf5;color:var(--ig-green);border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700;}
+
+/* ===== REELS / COLLAB ===== */
+#reelsScreen{background:#000;color:#fff;}
+.reels-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 4px;flex-shrink:0;}
+.reels-title{font-size:20px;font-weight:700;color:#fff;}
+.reel-card{background:#111;border-radius:14px;overflow:hidden;margin-bottom:10px;border:1px solid #222;cursor:pointer;}
+.reel-card:active{opacity:.8;}
+.reel-thumb{height:130px;display:flex;align-items:center;justify-content:center;position:relative;font-size:50px;}
+.reel-play-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.15);}
+.reel-play-circle{width:40px;height:40px;background:rgba(255,255,255,.25);backdrop-filter:blur(4px);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.reel-body{padding:10px 12px 12px;}
+.reel-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.reel-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.reel-name{font-size:13px;font-weight:600;color:#fff;}
+.reel-sub{font-size:11px;color:#aaa;}
+.reel-desc{font-size:12px;color:#bbb;margin-bottom:8px;}
+.reel-actions{display:flex;gap:8px;align-items:center;}
+.reel-btn{flex:1;padding:8px;background:#fff;color:#000;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--ig-font);}
+.reel-btn.cd{background:#333;color:#888;cursor:not-allowed;}
+.reel-reward{font-size:12px;color:#aaa;}
+
+/* ===== ACTIVITY / STATS ===== */
+#activityScreen{background:var(--ig-bg);}
+.act-topbar{display:flex;align-items:center;padding:0 16px;height:44px;border-bottom:1px solid var(--ig-border);flex-shrink:0;}
+.act-topbar-title{font-size:18px;font-weight:700;}
+.act-section{padding:16px;border-bottom:1px solid var(--ig-border);}
+.act-section:last-child{border-bottom:none;}
+.act-section-title{font-size:11px;font-weight:700;color:var(--ig-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
+.insight-row{display:flex;gap:6px;margin-bottom:4px;}
+.ins-box{flex:1;background:var(--ig-surface);border:1px solid var(--ig-border);border-radius:10px;padding:12px 6px;text-align:center;}
+.ins-n{font-size:18px;font-weight:700;}
+.ins-l{font-size:10px;color:var(--ig-muted);margin-top:2px;}
+.act-item{display:flex;align-items:center;gap:10px;padding:8px 0;}
+.act-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:var(--ig-surface);border:1px solid var(--ig-border);}
+.act-txt{flex:1;font-size:14px;line-height:1.4;}
+.act-txt span{color:var(--ig-muted);font-size:12px;}
+.ms-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--ig-border);}
+.ms-row:last-child{border-bottom:none;}
+.ms-circle{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.ms-circle.done{background:var(--ig-blue);color:#fff;}
+.ms-circle.todo{background:var(--ig-surface);border:1.5px solid var(--ig-border);color:var(--ig-muted);}
+.ms-label{font-size:14px;font-weight:500;}
+.ms-label.done{text-decoration:line-through;color:var(--ig-muted);}
+
+/* ===== BOTTOM NAV ===== */
+#bottomNav{background:var(--ig-bg);border-top:1px solid var(--ig-border);display:flex;height:var(--nav-h);flex-shrink:0;z-index:100;}
+.bn{flex:1;display:flex;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;padding:0;}
+.bn:active{opacity:.6;}
+.bn svg{width:26px;height:26px;fill:none;stroke:var(--ig-text);stroke-width:1.8;}
+.bn.active svg{stroke-width:2.2;}
+.bn-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid transparent;background:var(--ig-grad);transition:border-color .15s;}
+.bn.active .bn-av{border-color:var(--ig-text);}
+
+/* ===== TOAST ===== */
+#toast{position:fixed;top:55px;left:50%;transform:translateX(-50%) translateY(-8px);background:rgba(0,0,0,.85);backdrop-filter:blur(8px);color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:all .25s;z-index:9999;white-space:nowrap;max-width:92%;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.fol-pop{position:fixed;pointer-events:none;font-size:20px;font-weight:800;color:var(--ig-blue);z-index:9999;animation:fPop 1.4s ease-out forwards;text-shadow:0 1px 4px rgba(0,0,0,.12);}
+@keyframes fPop{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-70px) scale(1.2);}}
+
+.scrollable{flex:1;overflow-y:auto;scrollbar-width:none;}
+.scrollable::-webkit-scrollbar{display:none;}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ========== LOGIN ========== -->
+<div id="loginScreen">
+  <div class="login-logo-wrap">📸</div>
+  <div class="login-wordmark">Influencer</div>
+  <input class="ig-inp" id="nameInput" type="text" placeholder="ユーザーネーム" maxlength="20" autocomplete="off">
+  <div class="genre-lbl">カテゴリーを選ぼう</div>
+  <div class="niche-row">
+    <div class="niche-chip sel" data-n="food" onclick="pickNiche(this)"><span class="nc-ico">🍜</span>グルメ</div>
+    <div class="niche-chip" data-n="travel" onclick="pickNiche(this)"><span class="nc-ico">✈️</span>旅行</div>
+    <div class="niche-chip" data-n="fashion" onclick="pickNiche(this)"><span class="nc-ico">👗</span>ファッション</div>
+    <div class="niche-chip" data-n="fitness" onclick="pickNiche(this)"><span class="nc-ico">💪</span>フィットネス</div>
+    <div class="niche-chip" data-n="beauty" onclick="pickNiche(this)"><span class="nc-ico">💄</span>美容</div>
+    <div class="niche-chip" data-n="gaming" onclick="pickNiche(this)"><span class="nc-ico">🎮</span>ゲーム</div>
+  </div>
+  <button class="login-btn" onclick="startGame()">ログイン</button>
+  <div class="login-divider"><span>または</span></div>
+  <div class="login-fb" style="margin-bottom:20px">Facebookでログイン</div>
+  <div class="login-signup">アカウントをお持ちでないですか？ <b>登録する</b></div>
+</div>
+
+<!-- ========== HOME / PROFILE ========== -->
+<div class="screen" id="homeScreen">
+  <div class="ig-topnav">
+    <div class="tn-logo" id="tnName">user</div>
+    <div class="tn-icons">
+      <button class="icon-btn" onclick="goPost()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg>
+      </button>
+      <button class="icon-btn" onclick="goScreen('activityScreen',4)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        <div class="notif-dot" id="notifDot" style="display:none"></div>
+      </button>
+    </div>
+  </div>
+
+  <div class="scrollable">
+    <div class="prof-header">
+      <div class="prof-top">
+        <div class="prof-av-ring"><div class="prof-av-inner" id="profAvBig">📸</div></div>
+        <div class="prof-stats">
+          <div class="pstat"><div class="pstat-n" id="psPosts">0</div><div class="pstat-l">投稿</div></div>
+          <div class="pstat"><div class="pstat-n" id="psFollowers">0</div><div class="pstat-l">フォロワー</div></div>
+          <div class="pstat"><div class="pstat-n" id="psFollowing">124</div><div class="pstat-l">フォロー中</div></div>
+        </div>
+      </div>
+      <div class="prof-bio">
+        <div class="prof-name" id="profName">ユーザー</div>
+        <div class="prof-rank" id="profRank">🌱 ナノインフルエンサー</div>
+        <div class="prof-xp" id="profXP">Lv.1 · 0/100 XP</div>
+      </div>
+      <div class="prof-actions">
+        <button class="prof-btn primary" onclick="goPost()">投稿する</button>
+        <button class="prof-btn" onclick="goScreen('activityScreen',4)">分析</button>
+        <button class="prof-btn sm" onclick="goScreen('exploreScreen',1)">▾</button>
+      </div>
+      <div class="hl-row" id="hlRow">
+        <div class="hl-item" onclick="goPost()">
+          <div class="hl-ring new">＋</div>
+          <div class="hl-lbl">新規</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-tabs">
+      <button class="gtab active" id="gtab0" onclick="setGridView('grid')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      </button>
+      <button class="gtab" id="gtab1" onclick="setGridView('list')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10M7 13h6"/></svg>
+      </button>
+    </div>
+
+    <div id="photoGrid" class="photo-grid"></div>
+    <div id="feedList" style="display:none"></div>
+    <div style="height:12px"></div>
+  </div>
+</div>
+
+<!-- ========== POST SCREEN ========== -->
+<div class="screen" id="postScreen" style="background:#fff">
+  <div class="post-topbar">
+    <button class="txtbtn cancel" onclick="goHome()">✕</button>
+    <div class="post-topbar-title">新規投稿</div>
+    <button class="txtbtn share" id="shareTopBtn" onclick="doPost()">シェア</button>
+  </div>
+
+  <div class="ct-scroll">
+    <button class="ct-tab active" data-type="photo" onclick="pickPostType(this)"><span class="ctico">🖼</span>フォト</button>
+    <button class="ct-tab" data-type="reel" onclick="pickPostType(this)"><span class="ctico">🎬</span>リール</button>
+    <button class="ct-tab" data-type="story" onclick="pickPostType(this)"><span class="ctico">⭕</span>ストーリー</button>
+    <button class="ct-tab" data-type="live" onclick="pickPostType(this)"><span class="ctico">🔴</span>ライブ</button>
+    <button class="ct-tab" data-type="ad" onclick="pickPostType(this)"><span class="ctico">💼</span>PR案件</button>
+  </div>
+
+  <div class="post-preview" id="postPrev" style="background:linear-gradient(135deg,#f09433,#dc2743)">🖼</div>
+
+  <div class="energy-row">
+    <span style="font-size:12px;color:var(--ig-muted);font-weight:600">エネルギー</span>
+    <div class="edots" id="eDots"></div>
+    <span class="etxt" id="eTxt">10/10</span>
+  </div>
+
+  <div class="post-form scrollable">
+    <div class="pf-row">
+      <div class="pf-avatar" id="pfAvatar">📸</div>
+      <textarea class="pf-caption" id="capInput" placeholder="キャプションを書く..." rows="2"></textarea>
+    </div>
+    <div class="pf-row">
+      <div class="pf-lbl">場所を追加</div>
+      <div class="pf-val">東京, 日本</div>
+      <div class="pf-caret">›</div>
+    </div>
+    <div class="pf-row">
+      <div class="pf-lbl">コンテンツ種別</div>
+      <div class="pf-val" id="ptInfo" style="color:var(--ig-blue);font-size:12px"></div>
+    </div>
+    <div class="pf-row" id="cdRow" style="display:none">
+      <div class="pf-lbl">クールダウン</div>
+      <div class="cd-badge" id="cdBadge">⏳ 0s</div>
+    </div>
+  </div>
+
+  <button class="share-big-btn" id="shareBigBtn" onclick="doPost()">シェアする</button>
+</div>
+
+<!-- ========== EXPLORE / SKILLS ========== -->
+<div class="screen" id="exploreScreen">
+  <div class="explore-topbar">
+    <input class="explore-search-bar" placeholder="🔍  スキル検索" readonly>
+  </div>
+  <div class="coins-bar">🪙 <span id="skillCoins">0</span> コイン保有<span class="hint">タップでスキルUP</span></div>
+  <div class="scrollable">
+    <div class="sk-section">
+      <div class="sk-section-hd">スキルを強化 <span>すべて見る</span></div>
+      <div id="skillCards"></div>
+    </div>
+    <div style="height:12px"></div>
+  </div>
+</div>
+
+<!-- ========== REELS / COLLAB ========== -->
+<div class="screen" id="reelsScreen" style="background:#000;color:#fff">
+  <div class="reels-topbar">
+    <div class="reels-title">コラボ</div>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+  </div>
+  <div class="scrollable" style="padding:8px" id="reelsList"></div>
+</div>
+
+<!-- ========== ACTIVITY / STATS ========== -->
+<div class="screen" id="activityScreen">
+  <div class="act-topbar"><div class="act-topbar-title">アクティビティ</div></div>
+  <div class="scrollable">
+    <div class="act-section">
+      <div class="act-section-title">インサイト</div>
+      <div class="insight-row" id="insightRow"></div>
+    </div>
+    <div class="act-section" id="actFeed">
+      <div class="act-section-title">最近のアクティビティ</div>
+    </div>
+    <div class="act-section">
+      <div class="act-section-title">マイルストーン</div>
+      <div id="msRows"></div>
+    </div>
+    <div style="height:12px"></div>
+  </div>
+</div>
+
+<!-- ========== BOTTOM NAV ========== -->
+<div id="bottomNav">
+  <button class="bn active" id="bn0" onclick="goScreen('homeScreen',0)">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  </button>
+  <button class="bn" id="bn1" onclick="goScreen('exploreScreen',1)">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+  </button>
+  <button class="bn" id="bn2" onclick="goPost()">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg>
+  </button>
+  <button class="bn" id="bn3" onclick="goScreen('reelsScreen',3)">
+    <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg>
+  </button>
+  <button class="bn" id="bn4" onclick="goScreen('activityScreen',4)">
+    <div class="bn-av" id="bnAv">📸</div>
+  </button>
+</div>
+
+</div>
+<div id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const NICHES={
+  food:   {icon:'🍜',name:'グルメ',      bg:'linear-gradient(135deg,#f09433,#e6683c)'},
+  travel: {icon:'✈️',name:'旅行',        bg:'linear-gradient(135deg,#43b89c,#1a8faa)'},
+  fashion:{icon:'👗',name:'ファッション', bg:'linear-gradient(135deg,#e96eb3,#a855f7)'},
+  fitness:{icon:'💪',name:'フィットネス', bg:'linear-gradient(135deg,#22c55e,#16a34a)'},
+  beauty: {icon:'💄',name:'美容',        bg:'linear-gradient(135deg,#f472b6,#db2777)'},
+  gaming: {icon:'🎮',name:'ゲーム',      bg:'linear-gradient(135deg,#6366f1,#4338ca)'},
+};
+const PT={
+  photo: {icon:'🖼',name:'フォト',     e:1,cd:0,   f:[1,4],  l:[5,20], xp:10,c:0.3},
+  reel:  {icon:'🎬',name:'リール',     e:2,cd:30,  f:[3,10], l:[15,50],xp:20,c:0.6},
+  story: {icon:'⭕',name:'ストーリー', e:1,cd:0,   f:[0,2],  l:[2,8],  xp:5, c:0.1},
+  live:  {icon:'🔴',name:'ライブ配信', e:3,cd:60,  f:[5,20], l:[30,80],xp:30,c:1.0},
+  ad:    {icon:'💼',name:'PR案件',     e:2,cd:180, f:[1,4],  l:[5,15], xp:15,c:3.5},
+};
+const SKILLS=[
+  {id:'photo',   icon:'📷',name:'撮影技術',      desc:'フォト・リールの品質UP',         max:10,base:50, eff:'photo'},
+  {id:'caption', icon:'✏️',name:'キャプション力', desc:'エンゲージメントを高める文章術', max:8, base:80, eff:'caption'},
+  {id:'hashtag', icon:'#️⃣',name:'ハッシュタグ術', desc:'リーチ最大化のタグ戦略',         max:8, base:70, eff:'hashtag'},
+  {id:'schedule',icon:'⏰',name:'投稿スケジュール',desc:'ゴールデンタイム投稿でバズる',   max:6, base:120,eff:'schedule'},
+  {id:'brand',   icon:'👑',name:'ブランド力',     desc:'統一感あるフィードでファン化',   max:5, base:250,eff:'brand'},
+  {id:'viral',   icon:'🔥',name:'バズらせ術',     desc:'バズる確率を大幅UP',             max:5, base:300,eff:'viral'},
+  {id:'collab',  icon:'🤝',name:'コラボ力',       desc:'大物インフルとのコネクション',   max:5, base:200,eff:'collab'},
+];
+const COLLABS=[
+  {icon:'😊',name:'@mikuru_life', fol:'5.2万', bg:'#ffecd2',reward:50, xp:30, cd:300,desc:'ライフスタイル系'},
+  {icon:'🏋️',name:'@kenta_fit',   fol:'12万',  bg:'#d4f5e9',reward:100,xp:60, cd:600,desc:'フィットネス系'},
+  {icon:'✈️',name:'@travel_jun',  fol:'28万',  bg:'#d0e8ff',reward:200,xp:100,cd:900,desc:'旅行系メガインフル'},
+  {icon:'🍣',name:'@gourmet_saki',fol:'8万',   bg:'#fff0f4',reward:80, xp:50, cd:450,desc:'グルメ系'},
+  {icon:'💄',name:'@beauty_hana', fol:'50万',  bg:'#f5e6ff',reward:400,xp:150,cd:1800,desc:'ビューティー系'},
+  {icon:'🎮',name:'@gamer_ryo',   fol:'3.5万', bg:'#e8f4ff',reward:60, xp:40, cd:360,desc:'ゲーム実況系'},
+];
+const RANKS=[
+  {name:'ナノインフルエンサー',    min:0,      icon:'🌱'},
+  {name:'マイクロインフルエンサー',min:1000,   icon:'🌿'},
+  {name:'ライジングスター',        min:5000,   icon:'⭐'},
+  {name:'メガインフルエンサー',    min:20000,  icon:'🌟'},
+  {name:'トップクリエイター',      min:100000, icon:'👑'},
+  {name:'レジェンド',              min:500000, icon:'🏆'},
+];
+const MILESTONES=[
+  {name:'初めての投稿',    check:g=>g.posts>=1},
+  {name:'フォロワー100人', check:g=>g.followers>=100},
+  {name:'フォロワー1000人',check:g=>g.followers>=1000},
+  {name:'初バズ',          check:g=>g.maxGain>=100},
+  {name:'フォロワー1万人', check:g=>g.followers>=10000},
+  {name:'案件デビュー',    check:g=>g.adPosts>=1},
+  {name:'コラボ5回',       check:g=>g.collabs>=5},
+  {name:'フォロワー10万人',check:g=>g.followers>=100000},
+  {name:'スキルLv合計20',  check:g=>g.totalSkillLv>=20},
+  {name:'レジェンド到達',  check:g=>g.followers>=500000},
+];
+const CAPS={
+  food:   ['今日のランチ最高すぎた🍜✨','これは絶対食べてほしい…！','神グルメ発見してしまった👏'],
+  travel: ['また来たい場所みつけた✈️','絶景すぎてしばらく動けなかった🌅','旅って最高だよね❤️'],
+  fashion:['今日のコーデはこんな感じ👗','このブランド最近ハマってる💕','コーデのポイントはここ！'],
+  fitness:['今日も追い込んだ💪🔥','3ヶ月でここまで変わった…','一緒に頑張ろ🏃'],
+  beauty: ['このコスメ本当に神だった💄✨','スキンケア紹介するね','プチプラなのに最高品質！'],
+  gaming: ['やばすぎる神ゲー発見🎮','全クリした感想書くね','みんなは何のゲームが好き？'],
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let G=null, selNiche='food', selPT='photo', CDs={}, collabCDs={}, curScr='homeScreen', egTimer, gridView='grid';
+
+function newG(name,niche){
+  return{name,niche,followers:0,level:1,xp:0,xpNext:100,
+    coins:100,energy:10,maxEnergy:10,skills:{},posts:0,likes:0,
+    totalFollowers:0,maxGain:0,adPosts:0,collabs:0,totalSkillLv:0,
+    milestones:[],grid:[],activity:[]};
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+function pickNiche(el){
+  document.querySelectorAll('.niche-chip').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel'); selNiche=el.dataset.n;
+}
+
+function startGame(){
+  const n=document.getElementById('nameInput').value.trim()||'user';
+  const s=localStorage.getItem('igR2');
+  if(s){try{const p=JSON.parse(s);if(p.name===n)G=p;}catch(e){}}
+  if(!G)G=newG(n,selNiche);
+  document.getElementById('loginScreen').style.display='none';
+  startEgRegen();
+  renderCollab();
+  goScreen('homeScreen',0);
+}
+
+function startEgRegen(){
+  clearInterval(egTimer);
+  egTimer=setInterval(()=>{
+    if(G.energy<G.maxEnergy){G.energy++;if(curScr==='postScreen')refreshPost();}
+  },15000);
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function goScreen(id,tabIdx){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.bn').forEach((b,i)=>b.classList.toggle('active',i===tabIdx));
+  curScr=id;
+  if(id==='homeScreen'){renderProfile();renderGrid();}
+  if(id==='exploreScreen'){renderSkills();}
+  if(id==='activityScreen'){renderActivity();}
+  if(id==='reelsScreen'){renderCollab();}
+}
+
+function goPost(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('postScreen').classList.add('active');
+  document.querySelectorAll('.bn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('bn2').classList.add('active');
+  curScr='postScreen';
+  refreshPost();
+}
+
+function goHome(){goScreen('homeScreen',0);}
+
+// ============================================================
+// PROFILE / HOME
+// ============================================================
+function renderProfile(){
+  if(!G)return;
+  const ni=NICHES[G.niche], rank=getRank();
+  document.getElementById('tnName').textContent=G.name;
+  document.getElementById('profName').textContent=G.name;
+  document.getElementById('profRank').textContent=rank.icon+' '+rank.name;
+  document.getElementById('profXP').textContent=`Lv.${G.level} · ${G.xp}/${G.xpNext} XP`;
+  document.getElementById('profAvBig').textContent=ni.icon;
+  document.getElementById('bnAv').textContent=ni.icon;
+  document.getElementById('psPosts').textContent=G.posts;
+  document.getElementById('psFollowers').textContent=fmt(G.followers);
+
+  // Highlights
+  const hl=document.getElementById('hlRow');
+  let h=`<div class="hl-item" onclick="goPost()"><div class="hl-ring new">＋</div><div class="hl-lbl">新規</div></div>`;
+  h+=`<div class="hl-item"><div class="hl-ring">${ni.icon}</div><div class="hl-lbl">${ni.name}</div></div>`;
+  if(G.adPosts>0)h+=`<div class="hl-item"><div class="hl-ring">💼</div><div class="hl-lbl">PR案件</div></div>`;
+  if(G.collabs>0)h+=`<div class="hl-item"><div class="hl-ring">🤝</div><div class="hl-lbl">コラボ</div></div>`;
+  hl.innerHTML=h;
+}
+
+function setGridView(v){
+  gridView=v;
+  document.getElementById('gtab0').classList.toggle('active',v==='grid');
+  document.getElementById('gtab1').classList.toggle('active',v==='list');
+  document.getElementById('photoGrid').style.display=v==='grid'?'grid':'none';
+  document.getElementById('feedList').style.display=v==='list'?'block':'none';
+  if(v==='list')renderFeedList();
+}
+
+function renderGrid(){
+  if(!G)return;
+  const el=document.getElementById('photoGrid');
+  if(!G.grid.length){
+    el.innerHTML=`<div class="grid-empty"><div class="ge-circle">📸</div><div style="font-size:20px;font-weight:300;color:var(--ig-text)">シェアしよう</div><div style="font-size:13px;color:var(--ig-muted);text-align:center">写真や動画をシェアすると<br>プロフィールに表示されます</div></div>`;
+    return;
+  }
+  const ni=NICHES[G.niche];
+  el.innerHTML=G.grid.slice().reverse().map(p=>`
+    <div class="pc">
+      <div class="pc-inner" style="background:${ni.bg}">${PT[p.type]?.icon||'📸'}</div>
+      <div class="pc-ov"><div class="pc-stat">❤️ ${fmt(p.likes)}</div><div class="pc-stat">👥 +${fmt(p.gained)}</div></div>
+      ${p.viral?'<div class="pc-viral">🔥</div>':''}
+    </div>`).join('');
+}
+
+function renderFeedList(){
+  const el=document.getElementById('feedList');
+  if(!G.grid.length){el.innerHTML='';return;}
+  const ni=NICHES[G.niche];
+  el.innerHTML=G.grid.slice().reverse().map(p=>`
+    <div style="background:#fff;border-bottom:1px solid var(--ig-border)">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--ig-grad);display:flex;align-items:center;justify-content:center;font-size:16px">${ni.icon}</div>
+        <div style="flex:1;font-weight:700;font-size:14px">${G.name}</div>
+        <div style="font-size:20px;color:var(--ig-muted)">···</div>
+      </div>
+      <div style="width:100%;aspect-ratio:1;background:${ni.bg};display:flex;align-items:center;justify-content:center;font-size:80px">${PT[p.type]?.icon||'📸'}</div>
+      <div style="padding:10px 14px">
+        <div style="display:flex;gap:14px;margin-bottom:8px;font-size:24px">❤️ 💬 ↗️ <span style="margin-left:auto">🔖</span></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:2px">いいね ${p.likes.toLocaleString()}件</div>
+        <div style="font-size:13px"><b>${G.name}</b> ${p.cap}</div>
+        ${p.viral?'<div style="font-size:12px;color:var(--ig-red);margin-top:3px">🔥 バイラル投稿</div>':''}
+        <div style="font-size:11px;color:var(--ig-muted);margin-top:4px">${p.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ============================================================
+// POST SCREEN
+// ============================================================
+function pickPostType(el){
+  document.querySelectorAll('.ct-tab').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active'); selPT=el.dataset.type; refreshPost();
+}
+
+function refreshPost(){
+  if(!G)return;
+  const ni=NICHES[G.niche], pt=PT[selPT], cd=CDs[selPT]||0;
+  document.getElementById('postPrev').style.background=ni.bg;
+  document.getElementById('postPrev').textContent=pt.icon;
+  document.getElementById('pfAvatar').textContent=ni.icon;
+
+  const dots=document.getElementById('eDots');
+  dots.innerHTML=Array.from({length:Math.min(G.maxEnergy,12)},(_,i)=>
+    `<div class="edot ${i<G.energy?'on':''}"></div>`).join('');
+  document.getElementById('eTxt').textContent=`${G.energy}/${G.maxEnergy}`;
+  document.getElementById('ptInfo').textContent=`⚡${pt.e} · +${pt.f[0]}〜${pt.f[1]}人想定`;
+
+  const cdRow=document.getElementById('cdRow');
+  if(cd>0){cdRow.style.display='flex';document.getElementById('cdBadge').textContent=`⏳ ${cd}s クールダウン中`;}
+  else{cdRow.style.display='none';}
+
+  const dis=cd>0||G.energy<pt.e;
+  document.getElementById('shareBigBtn').disabled=dis;
+  document.getElementById('shareTopBtn').style.opacity=dis?.4:1;
+  document.getElementById('shareTopBtn').style.pointerEvents=dis?'none':'';
+  if(cd>0)document.getElementById('shareBigBtn').textContent=`⏳ クールダウン中 (${cd}s)`;
+  else if(G.energy<pt.e)document.getElementById('shareBigBtn').textContent='⚡ エネルギー不足';
+  else document.getElementById('shareBigBtn').textContent='シェアする';
+}
+
+function doPost(){
+  if(!G)return;
+  const pt=PT[selPT],cd=CDs[selPT]||0;
+  if(G.energy<pt.e){showToast('⚡ エネルギーが足りない！');return;}
+  if(cd>0){showToast('⏳ クールダウン中！');return;}
+  G.energy-=pt.e; G.posts++;
+
+  const sb=getSB();
+  let fMn=pt.f[0],fMx=pt.f[1],lMn=pt.l[0],lMx=pt.l[1];
+  fMn=Math.floor(fMn*(1+sb.photo*.1)*(1+sb.hashtag*.15));
+  fMx=Math.floor(fMx*(1+sb.photo*.1)*(1+sb.hashtag*.15));
+  lMn=Math.floor(lMn*(1+sb.caption*.12));
+  lMx=Math.floor(lMx*(1+sb.caption*.12));
+  const sc=1+Math.log10(Math.max(1,G.followers))*.25;
+  fMn=Math.floor(fMn*sc); fMx=Math.floor(fMx*sc);
+  const viral=Math.random()<.05+sb.viral*.08;
+  if(viral){fMn*=5;fMx*=8;lMn*=3;lMx*=5;}
+  const gained=Math.floor(fMn+Math.random()*(fMx-fMn));
+  const likes=Math.floor(lMn+Math.random()*(lMx-lMn));
+  const xpG=Math.floor(pt.xp*(1+sb.brand*.05));
+  const coinG=Math.floor(pt.c*(1+G.followers/10000)*(viral?3:1));
+  const cap=CAPS[G.niche][Math.floor(Math.random()*3)];
+
+  G.followers+=gained; G.totalFollowers+=gained;
+  G.likes+=likes; G.xp+=xpG; G.coins+=coinG;
+  if(gained>G.maxGain)G.maxGain=gained;
+  if(selPT==='ad')G.adPosts++;
+
+  if(pt.cd>0){
+    const s=Math.floor(pt.cd*(1-getSB().schedule*.1));
+    CDs[selPT]=s;
+    const iv=setInterval(()=>{CDs[selPT]--;if(CDs[selPT]<=0){delete CDs[selPT];clearInterval(iv);}if(curScr==='postScreen')refreshPost();},1000);
+  }
+
+  G.grid.push({type:selPT,likes,gained,viral,cap,time:'たった今',xpG,coinG});
+  G.activity.unshift({text:`<b>+${gained}人</b>フォロワーが増えました`,icon:viral?'🔥':'📸',sub:viral?'バイラル投稿！':'投稿への反応あり'});
+  if(G.activity.length>20)G.activity.pop();
+
+  checkLvUp(); checkMS(); saveG();
+  showToast(viral?`🔥 バズった！ +${gained}フォロワー`:`📸 投稿完了！ +${gained}人 💰+${coinG}`);
+  if(gained>0)showFPop('+'+gained);
+  goHome();
+}
+
+// ============================================================
+// SKILLS
+// ============================================================
+function renderSkills(){
+  if(!G)return;
+  document.getElementById('skillCoins').textContent=fmt(G.coins);
+  document.getElementById('skillCards').innerHTML=SKILLS.map(s=>{
+    const lv=G.skills[s.id]||0, maxed=lv>=s.max;
+    const cost=Math.floor(s.base*Math.pow(1.6,lv));
+    const can=G.coins>=cost;
+    return `<div class="sk-card" onclick="buySkill('${s.id}')">
+      <div class="sk-ico">${s.icon}</div>
+      <div class="sk-info">
+        <div class="sk-name">${s.name}</div>
+        <div class="sk-desc">${s.desc}</div>
+        <div class="sk-prog"><div class="sk-prog-fill" style="width:${(lv/s.max)*100}%"></div></div>
+      </div>
+      <div class="sk-right">
+        <div class="sk-lv">Lv.${lv}/${s.max}</div>
+        ${maxed?'<div class="sk-max">✓ MAX</div>':`<div class="sk-cost" style="${can?'':'opacity:.4'}">🪙 ${cost}</div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function buySkill(id){
+  const s=SKILLS.find(x=>x.id===id), lv=G.skills[id]||0;
+  if(lv>=s.max){showToast('✅ すでにMAXです！');return;}
+  const cost=Math.floor(s.base*Math.pow(1.6,lv));
+  if(G.coins<cost){showToast('🪙 コインが足りない！');return;}
+  G.coins-=cost; G.skills[id]=(G.skills[id]||0)+1; G.totalSkillLv++;
+  showToast(`⚡ ${s.name} Lv.${G.skills[id]} にアップ！`);
+  checkMS(); saveG(); renderSkills();
+}
+
+function getSB(){
+  const b={photo:0,caption:0,hashtag:0,schedule:0,brand:0,viral:0,collab:0};
+  SKILLS.forEach(s=>{b[s.eff]=G.skills[s.id]||0;});
+  return b;
+}
+
+// ============================================================
+// COLLABS
+// ============================================================
+function renderCollab(){
+  if(!G)return;
+  document.getElementById('reelsList').innerHTML=COLLABS.map((c,i)=>{
+    const cd=collabCDs[i]||0;
+    return `<div class="reel-card" onclick="doCollab(${i})">
+      <div class="reel-thumb" style="background:${c.bg}">${c.icon}
+        <div class="reel-play-wrap"><div class="reel-play-circle">${cd>0?'⏳':'▶'}</div></div>
+      </div>
+      <div class="reel-body">
+        <div class="reel-row">
+          <div class="reel-av" style="background:${c.bg}">${c.icon}</div>
+          <div><div class="reel-name">${c.name}</div><div class="reel-sub">${c.fol}フォロワー · ${c.desc}</div></div>
+        </div>
+        <div class="reel-desc">コラボしてフォロワーを一気に増やすチャンス！</div>
+        <div class="reel-actions">
+          <button class="reel-btn ${cd>0?'cd':''}" onclick="event.stopPropagation();doCollab(${i})">${cd>0?`⏳ ${cd}s`:'コラボする'}</button>
+          <div class="reel-reward">🪙+${c.reward}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function doCollab(i){
+  if(!G)return;
+  if(collabCDs[i]>0){showToast('⏳ クールダウン中！');return;}
+  const c=COLLABS[i];
+  if(G.energy<2){showToast('⚡ エネルギーが足りない！');return;}
+  G.energy-=2;
+  const fol=Math.floor(10+Math.random()*30*(1+G.level*.1));
+  G.coins+=c.reward; G.xp+=c.xp; G.followers+=fol; G.collabs++;
+  G.activity.unshift({text:`<b>${c.name}</b> とコラボ成功！`,icon:c.icon,sub:`+${fol}フォロワー 🪙+${c.reward}`});
+  collabCDs[i]=c.cd;
+  const iv=setInterval(()=>{collabCDs[i]--;if(collabCDs[i]<=0){delete collabCDs[i];clearInterval(iv);}renderCollab();},1000);
+  showToast(`🤝 ${c.name} とコラボ成功！ +${fol}フォロワー`);
+  checkLvUp(); checkMS(); saveG(); renderCollab();
+}
+
+// ============================================================
+// ACTIVITY
+// ============================================================
+function renderActivity(){
+  if(!G)return;
+  document.getElementById('insightRow').innerHTML=`
+    <div class="ins-box"><div class="ins-n">${fmt(G.followers)}</div><div class="ins-l">フォロワー</div></div>
+    <div class="ins-box"><div class="ins-n">${fmt(G.likes)}</div><div class="ins-l">いいね合計</div></div>
+    <div class="ins-box"><div class="ins-n">Lv.${G.level}</div><div class="ins-l">レベル</div></div>
+    <div class="ins-box"><div class="ins-n">${fmt(G.coins)}</div><div class="ins-l">コイン</div></div>
+  `;
+  const rank=getRank();
+  const items=[...G.activity.slice(0,8),{text:`現在のランク：<b>${rank.icon} ${rank.name}</b>`,icon:'📊',sub:`フォロワー ${fmt(G.followers)}人`}];
+  document.getElementById('actFeed').innerHTML=
+    `<div class="act-section-title">最近のアクティビティ</div>`+
+    (items.length?items.map(a=>`<div class="act-item"><div class="act-av">${a.icon}</div><div class="act-txt">${a.text}<br><span>${a.sub||''}</span></div></div>`).join(''):'<div style="font-size:13px;color:var(--ig-muted);padding:8px 0">まだアクティビティがありません</div>');
+  document.getElementById('msRows').innerHTML=MILESTONES.map(m=>{
+    const done=G.milestones.includes(m.name);
+    return `<div class="ms-row">
+      <div class="ms-circle ${done?'done':'todo'}">${done?'✓':'○'}</div>
+      <div class="ms-label ${done?'done':''}">${m.name}</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function checkLvUp(){
+  while(G.xp>=G.xpNext){
+    G.xp-=G.xpNext; G.level++;
+    G.xpNext=Math.floor(100*Math.pow(1.4,G.level-1));
+    G.maxEnergy=10+Math.floor(G.level/2); G.energy=G.maxEnergy;
+    showToast(`⭐ レベルアップ！ Lv.${G.level}`);
+  }
+}
+function checkMS(){
+  MILESTONES.forEach(m=>{
+    if(!G.milestones.includes(m.name)&&m.check(G)){
+      G.milestones.push(m.name);
+      showToast(`🏆 ${m.name} 達成！`);
+      G.activity.unshift({text:`マイルストーン達成 <b>${m.name}</b>`,icon:'🏆',sub:'おめでとう！'});
+    }
+  });
+}
+function getRank(){let r=RANKS[0];for(const x of RANKS){if(G.followers>=x.min)r=x;}return r;}
+function fmt(n){if(n>=10000)return(n/10000).toFixed(1)+'万';if(n>=1000)return(n/1000).toFixed(1)+'k';return String(n);}
+function saveG(){try{localStorage.setItem('igR2',JSON.stringify(G));}catch(e){}}
+
+let toastT;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2400);
+}
+function showFPop(txt){
+  const el=document.createElement('div');
+  el.className='fol-pop'; el.textContent=txt;
+  el.style.left=(35+Math.random()*30)+'%'; el.style.top='40%';
+  document.body.appendChild(el); setTimeout(()=>el.remove(),1500);
+}
+</script>
+</body>
+</html>
